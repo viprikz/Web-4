@@ -1,32 +1,68 @@
 package org.example.sweater.controllers;
 
+import com.mongodb.util.JSON;
 import org.example.sweater.entitys.AnswersE;
 import org.example.sweater.entitys.QuestionE;
 import org.example.sweater.QuestionsRepository;
+import org.example.sweater.entitys.Test;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 @Controller
 public class GreetingController {
     @Autowired
     private QuestionsRepository repository;
-    @GetMapping("/top5")
+    @GetMapping("/top10")
     public String greeting(Model model) {
+        JSONArray jsonArray = new JSONArray();
+        JSONObject jsonObject = new JSONObject();
         try{
             List<QuestionE> list =repository.findAll();
             int z = 0;
             if(list.size() >=10)
                 z = 9;
             list.subList(list.size() - z , list.size());
-            System.out.println(list);
-            model.addAttribute("name", list);
+            //model.addAttribute("name", list);
+            for(int i = 0; i < list.size(); i++) {
+                jsonObject = new JSONObject();
+                jsonObject.put("content", list.get(i).getContent());
+                jsonObject.put("id", list.get(i).getid());
+                jsonObject.put("order", list.get(i).getOrder());
+                jsonObject.put("shortcontent", list.get(i).getShortcontent());
+                jsonArray.put(jsonObject);
+            }
+            model.addAttribute("name", jsonArray.toString().substring(1,jsonArray.toString().length() - 1));
+
         }catch (Exception e){ System.out.println(e);}
+
         return "greeting";
     }
+    /*@Controller
+    public class GreetingController10 {
+        @Autowired
+        private QuestionsRepository repository;
+        @GetMapping("/top10")
+        public String greeting10(@RequestBody Test str) {
+            try{
+                List<QuestionE> list =repository.findAll();
+                int z = 0;
+                if(list.size() >=10)
+                    z = 9;
+                list.subList(list.size() - z , list.size());
+                System.out.println(list);
+                //model.addAttribute("name", str);
+            }catch (Exception e){ System.out.println(e);}
+            //model.addAttribute("name", str);
+            return str.toString();
+        }*/
     //Поиск вопроса по Id
     /*@RequestMapping(value="/findId/{id}", method= RequestMethod.GET)
     public String findQuestion(@PathVariable String id, Model  model) {
@@ -38,41 +74,71 @@ public class GreetingController {
     }*/
     //Поиск вопроса по Заголовку
     @RequestMapping(value="/search/{content}", method= RequestMethod.GET)
-    public String findQuestionByContent(@PathVariable String content, Model  model) {
+    public String findQuestionByContent(@PathVariable String content, Model  model) throws JSONException {
         List<QuestionE> list = repository.findByShortcontent(content);
-        //System.out.println(content);
-        //System.out.println(list);
-        try{model.addAttribute("name",  list.get(0));
+        JSONArray jsonArray = new JSONArray();
+        JSONObject jsonObject = new JSONObject();
+        for(int i = 0; i < list.size(); i++) {
+            jsonObject = new JSONObject();
+            jsonObject.put("content", list.get(i).getContent());
+            jsonObject.put("id", list.get(i).getid());
+            jsonObject.put("order", list.get(i).getOrder());
+            jsonObject.put("shortcontent", list.get(i).getShortcontent());
+            jsonArray.put(jsonObject);
+        }
+        //model.addAttribute("name", jsonArray.toString().substring(1,jsonArray.toString().length() - 1));
+        try{model.addAttribute("name", jsonArray.toString().substring(1,jsonArray.toString().length() - 1));
         }catch (Exception e){ System.out.println(e);}
         return "greeting";
     }
 
     //Поиск вопроса по id
     @RequestMapping(value="/question/{id}", method= RequestMethod.GET)
-    public String openQuestion(@PathVariable String id, Model  model) {
+    public String openQuestion(@PathVariable String id, Model  model) throws JSONException {
        List<QuestionE> list = repository.findByIdd(id);
+        JSONArray jsonArray = new JSONArray();
+        JSONObject jsonObject = new JSONObject();
+        for(int i = 0; i < list.size(); i++) {
+            jsonObject = new JSONObject();
+            jsonObject.put("content", list.get(i).getContent());
+            jsonObject.put("id", list.get(i).getid());
+            jsonObject.put("order", list.get(i).getOrder());
+            jsonObject.put("shortcontent", list.get(i).getShortcontent());
+            jsonArray.put(jsonObject);
+        }
+        //model.addAttribute("name", jsonArray.toString().substring(1,jsonArray.toString().length() - 1));
        try {
-           model.addAttribute("name", list.get(0));
+           model.addAttribute("name", jsonArray.toString().substring(1,jsonArray.toString().length() - 1));
        }catch (Exception e){ System.out.println(e);}
         return "greeting";
     }
 
-    //Весь вопрос
-        @RequestMapping(value="/question/{id}/ans/{content}", method= RequestMethod.GET)
-    public String putAnswer(@PathVariable String id, @PathVariable String content,  Model  model) {
+    //Добавить ответ
+        @RequestMapping(value="/question/{id}/add/{content}", method= RequestMethod.GET)
+    public String putAnswer(@PathVariable String id, @PathVariable String content,  Model  model) throws JSONException {
         List<QuestionE> list = repository.findByIdd(id);
         AnswersE Ans = new AnswersE(content);
         System.out.println(content);
         System.out.println(Ans);
+        JSONArray jsonArray = new JSONArray();
+        JSONObject jsonObject = new JSONObject();
+        for(int i = 0; i < list.size(); i++) {
+            jsonObject = new JSONObject();
+            jsonObject.put("content", list.get(i).getContent());
+            jsonObject.put("id", list.get(i).getid());
+            jsonObject.put("order", list.get(i).getOrder());
+            jsonObject.put("shortcontent", list.get(i).getShortcontent());
+            jsonArray.put(jsonObject);
+        }
         //list.get(0).addAnswer(Ans);
         //System.out.println(list.get(0));
         try {
             list.get(0).addAnswer(Ans);
             repository.save(list.get(0));
-            model.addAttribute("name", list.get(0));
+            model.addAttribute("name", model.addAttribute("name", jsonArray.toString().substring(1,jsonArray.toString().length() - 1));
         }catch (Exception e){ System.out.println(e);}
         return "greeting";
-    }
+        }
     /*@RequestMapping Mapping("/listHeaders")
     public ResponseEntity<String> listAllHeaders(
             @RequestHeader Map<String, String> headers) {
