@@ -1,10 +1,13 @@
 package org.example.sweater.entitys;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import org.example.sweater.entitys.AnswersE;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.data.annotation.Id;
 
 import java.util.ArrayList;
 import java.util.List;
-
+@JsonAutoDetect
 public class QuestionE {
     @Id
     private String id;
@@ -33,6 +36,11 @@ public class QuestionE {
         }catch (Exception et){System.out.println(et);}
         return;
     }
+    public List<AnswersE> getList()
+    {
+        return this.Answers;
+    }
+
 
     @Override
     public String toString() {
