@@ -1,5 +1,7 @@
 package org.example.sweater;
 import org.example.sweater.entitys.QuestionE;
+import org.example.sweater.entitys.Users;
+import org.example.sweater.repository.QuestionsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -27,6 +29,7 @@ public class Application implements CommandLineRunner {
         repository.save(new QuestionE("Подскажите хороший сайт с торрент трекерами", "Срочно подскажите хороший сайт с трекерами", 3));
         repository.save(new QuestionE("Не прогружаются картинки в вк", "У меня созрела неприятная проблема.Я хотел отправить пикчу под постом в ВК но заметил что нужной мне пикчи нету. Прошу заметить, что в общей сложности на телефоне у меня 1059 фотографии, из них 748 скачаны с ВК, но ВКонтакте не показывает и половины фотографий. На фотографии показаны только 2 фотки хотя, напомню, у меня их 748.", 4));
         repository.save(new QuestionE("Сброс пароля с телефона explay n1", "\"Забыл пароль, особо важного там нет. Открыл типо заводское меню с помощью комбинаций клавиш Питание + Кнопка громкости. Что дальше делать не знаю. Помогите!", 5));
+        Users users = new Users("danil", "pass");
         // fetch all customers
         System.out.println("Customers found with findAll():");
         System.out.println("-------------------------------");

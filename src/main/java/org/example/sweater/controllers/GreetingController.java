@@ -3,12 +3,13 @@ package org.example.sweater.controllers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.example.sweater.entitys.AnswersE;
 import org.example.sweater.entitys.QuestionE;
-import org.example.sweater.QuestionsRepository;
+import org.example.sweater.entitys.Users;
+import org.example.sweater.repository.QuestionsRepository;
+//import org.example.sweater.service.CreateUser;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +19,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.io.StringWriter;
-import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -87,31 +87,7 @@ public class GreetingController {
                 return new ResponseEntity<>(writer.toString(), HttpStatus.OK);
             }
         }
-        /*@PostMapping(
-                value = "/updatePerson", consumes = "application/json", produces = "application/json")
-        public Test updatePerson(@RequestBody Test person, HttpServletResponse response) {
-            response.setHeader("Location", ServletUriComponentsBuilder.fromCurrentContextPath()
-                    .path("/findPerson/" + person.getOne()).toUriString());
 
-            return PersonService.saveUpdatePerson(person);
-        }*/
-
-        /*public String greeting10(@RequestBody Test str) {
-            try {
-                List<QuestionE> list = repository.findAll();
-                int z = 0;
-                if (list.size() >= 10)
-                    z = 9;
-                list.subList(list.size() - z, list.size());
-                //System.out.println(list);
-                //model.addAttribute("name", str);
-            } catch (Exception e) {
-                //System.out.println(e);
-            }
-            //model.addAttribute("name", str);
-            return str.toString();
-
-        }*/
     }
     //Поиск вопроса по Id
     @RequestMapping(value="/findById/{id}", method= RequestMethod.GET,produces = MediaType.APPLICATION_JSON_VALUE)
@@ -126,6 +102,7 @@ public class GreetingController {
     }
 
     //Поиск вопроса по Заголовку
+
     @RequestMapping(value="/search/{content}", method= RequestMethod.GET,produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> findQuestionByContent(@PathVariable String content, Model  model) throws JSONException, IOException {
         List<QuestionE> list = repository.findByShortcontent(content);
@@ -139,43 +116,19 @@ public class GreetingController {
         return new ResponseEntity<>(writer.toString(), HttpStatus.OK);
     }
 
-    /*//Поиск вопроса по id
-    @RequestMapping(value="/question/{id}", method= RequestMethod.GET)
-    public String openQuestion(@PathVariable String id, Model  model) throws JSONException {
-       List<QuestionE> list = repository.findByIdd(id);
-        JSONArray jsonArray = new JSONArray();
-        JSONObject jsonObject = new JSONObject();
-        for(int i = 0; i < list.size(); i++) {
-            jsonObject = new JSONObject();
-            jsonObject.put("content", list.get(i).getContent());
-            jsonObject.put("id", list.get(i).getid());
-            jsonObject.put("order", list.get(i).getOrder());
-            jsonObject.put("shortcontent", list.get(i).getShortcontent());
-            jsonArray.put(jsonObject);
-        }
-        //model.addAttribute("name", jsonArray.toString().substring(1,jsonArray.toString().length() - 1));
-       try {
-           model.addAttribute("name", jsonArray.toString().substring(1,jsonArray.toString().length() - 1));
-       }catch (Exception e){ System.out.println(e);}
-        return jsonArray.toString().substring(1,jsonArray.toString().length() - 1);
-    }*/
-
-   /*
-    @RestController
-    @RequestMapping("users")
+    /*@RestController
+    @RequestMapping("/registration")
     public class UserController {
-
+        @Autowired
+        private QuestionsRepository repository;
         @PostMapping
-        public UserRest createUser(@RequestBody AnswersE requestUserDetails) {
-            UserRest returnValue = new UserRest();
-
-            UserDto userDto = new UserDto();
-            BeanUtils.copyProperties(requestUserDetails, userDto);
-            UserDto createdUser = userService.createUser(userDto);
-            BeanUtils.copyProperties(createdUser, returnValue);
-            return returnValue;
+        public ResponseEntity<String> createUser(@RequestBody Users requestUser) {
+            CreateUser createUser = new CreateUser(requestUser);
+            createUser.showUser();
+            createUser.saveUser();
+            StringWriter writer = new StringWriter();
+            ObjectMapper mapper = new ObjectMapper();
+            return new ResponseEntity<>("OK", HttpStatus.OK);
         }
     }*/
-
 }
-

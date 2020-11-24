@@ -1,4 +1,4 @@
-package org.example.sweater;
+package org.example.sweater.repository;
 import java.util.List;
 
 import org.example.sweater.entitys.QuestionE;
@@ -16,6 +16,7 @@ public interface QuestionsRepository extends MongoRepository<QuestionE, String> 
     public List<QuestionE> findtop10();*/
     //public List<QuestionE> findByContent(String content);
     //@Query(sort = "{ 'id' : -1 }")
+    //@Query(value = "db.questionE.find().limit(3)")
     public List<QuestionE> findAll();
     //public List<QuestionE> findAllOrderByOrderAsc();
 }
