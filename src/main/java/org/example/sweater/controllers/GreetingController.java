@@ -62,7 +62,7 @@ public class GreetingController {
             return new ResponseEntity<>(writer.toString(), HttpStatus.OK);
         }
         //Добавить ответ
-            @PostMapping(value="/findById/{id}/add/",produces = MediaType.APPLICATION_JSON_VALUE)
+            @PostMapping(value="/{id}/add/",produces = MediaType.APPLICATION_JSON_VALUE)
         public ResponseEntity<String> putAnswer(@PathVariable String id,  @RequestBody AnswersE answer) throws JSONException, IOException {
             List<QuestionE> list = repository.findByIdd(id);
             AnswersE Ans = answer;
@@ -72,7 +72,6 @@ public class GreetingController {
             try {
                 list.get(0).addAnswer(Ans);
                 saved = repository.save(list.get(0));
-
             }catch (Exception e){
                 System.out.println(e);
                 mapper.writeValue(writer, saved);
@@ -90,14 +89,13 @@ public class GreetingController {
 
     }
     //Поиск вопроса по Id
-    @RequestMapping(value="/findById/{id}", method= RequestMethod.GET,produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value="/{id}", method= RequestMethod.GET,produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> findQuestion(@PathVariable String id) throws JSONException, IOException {
         List<QuestionE> list = repository.findByIdd(id);
         StringWriter writer = new StringWriter();
         ObjectMapper mapper = new ObjectMapper();
         mapper.writeValue(writer,list.get(0));
-        return new ResponseEntity<>(writer.toString(), HttpStatus.OK);
-
+        return new ResponseEntity<>(writer.toString(), HttpStatus.OK)
 
     }
 
@@ -116,19 +114,4 @@ public class GreetingController {
         return new ResponseEntity<>(writer.toString(), HttpStatus.OK);
     }
 
-    /*@RestController
-    @RequestMapping("/registration")
-    public class UserController {
-        @Autowired
-        private QuestionsRepository repository;
-        @PostMapping
-        public ResponseEntity<String> createUser(@RequestBody Users requestUser) {
-            CreateUser createUser = new CreateUser(requestUser);
-            createUser.showUser();
-            createUser.saveUser();
-            StringWriter writer = new StringWriter();
-            ObjectMapper mapper = new ObjectMapper();
-            return new ResponseEntity<>("OK", HttpStatus.OK);
-        }
-    }*/
 }
