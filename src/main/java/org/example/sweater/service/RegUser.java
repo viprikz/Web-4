@@ -1,8 +1,4 @@
 package org.example.sweater.service;
-
-
-/*
-
 import org.example.sweater.entitys.Users;
 import org.example.sweater.repository.QuestionsRepository;
 import org.example.sweater.repository.UsersRepository;
@@ -12,24 +8,27 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
-public class CreateUser {
+public class RegUser {
     @Autowired
-    private UsersRepository repository;
+    private UsersRepository repo;
     private Users user;
-    public CreateUser(Users user) {
-        this.user= user;
+    public void setUser(Users user){
+        this.user = user;
+    }
+    public Users getUser(){
+        return this.user;
     }
     public Users saveUser(){
         try {
-            System.out.println("Началось создание");
-            BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-            String hashedPassword = passwordEncoder.encode(this.user.getPassword());
-            this.user.setPassword(hashedPassword);
-            System.out.println(repository.findAll());
-            repository.save(this.user);
-            return repository.save(user);
+            repo.findByUsername(this.getUser().getUsername());
+            if(repo.findByUsername(this.getUser().getUsername()) == null) {
+                BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+                String hashedPassword = passwordEncoder.encode(this.user.getPassword());
+                this.user.setPassword(hashedPassword);
+                this.user = repo.save(user);
+            }
         } catch (Exception e) {
-            System.out.println("Ошибка в создаии пользоваеля");
+            System.out.println("Ошибка в создани пользоваеля");
             System.out.println(e);
         }
         return null;
@@ -41,4 +40,4 @@ public class CreateUser {
         System.out.println(this.user.getPassword());
         System.out.println("-------------------------");
     }
-}*/
+}

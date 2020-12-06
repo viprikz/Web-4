@@ -6,6 +6,9 @@ import org.example.sweater.entitys.QuestionE;
 import org.example.sweater.entitys.Users;
 import org.example.sweater.repository.QuestionsRepository;
 //import org.example.sweater.service.CreateUser;
+//import org.example.sweater.service.CreateUser;
+import org.example.sweater.repository.UsersRepository;
+import org.example.sweater.service.RegUser;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -28,12 +31,8 @@ public class GreetingController {
     @RequestMapping(value = "/top10", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> top10(Model model) {
         //List<QuestionE> listE = new ArrayList<QuestionE>();
-        JSONArray jsonArray = new JSONArray();
-        JSONObject jsonObject = new JSONObject();
         StringWriter writer = new StringWriter();
         ObjectMapper mapper = new ObjectMapper();
-        /*Sort sort = new Sort(Sort.Direction.ASC, "id");
-        List<QuestionE> students = repository.findStudent(1, sort);*/
         try{
             List<QuestionE> list =repository.findAll();
             mapper.writeValue(writer, list);
@@ -41,8 +40,6 @@ public class GreetingController {
             if(list.size() >=10)
                 z = 9;
             list.subList(list.size() - z , list.size());
-            //model.addAttribute("name", list);
-            //model.addAttribute("name", jsonArray.toString().substring(1,jsonArray.toString().length() - 1));
         }catch (Exception e){ System.out.println(e);}
         return new ResponseEntity<>(writer.toString(), HttpStatus.OK);
     }
@@ -51,6 +48,12 @@ public class GreetingController {
     public class GreetingController10 {
         @Autowired
         private QuestionsRepository repository;
+
+        @Autowired
+        private UsersRepository repo;
+
+        @Autowired
+        private RegUser regUser;
 
         @PostMapping(value="/question/{id}/test", produces = MediaType.APPLICATION_JSON_VALUE)
         public ResponseEntity<String> putAnswerTest(@PathVariable String id,  @RequestBody AnswersE answer) throws JSONException, IOException {
@@ -86,6 +89,18 @@ public class GreetingController {
                 return new ResponseEntity<>(writer.toString(), HttpStatus.OK);
             }
         }
+        @PostMapping(value="/register" ,produces = MediaType.APPLICATION_JSON_VALUE)
+        public ResponseEntity<String> createUserTest(@RequestBody Users user) throws JSONException, IOException {
+            //RegUser regUser = new RegUser();
+            regUser.setUser(user);
+            regUser.saveUser();
+            StringWriter writer1 = new StringWriter();
+            ObjectMapper mapper1 = new ObjectMapper();
+            mapper1.writeValue(writer1, repo.findByUsername(user.getUsername()));
+            System.out.println(writer1.toString());
+            return new ResponseEntity<>(writer1.toString(), HttpStatus.OK);
+        }
+
 
     }
     //Поиск вопроса по Id
@@ -95,7 +110,7 @@ public class GreetingController {
         StringWriter writer = new StringWriter();
         ObjectMapper mapper = new ObjectMapper();
         mapper.writeValue(writer,list.get(0));
-        return new ResponseEntity<>(writer.toString(), HttpStatus.OK)
+        return new ResponseEntity<>(writer.toString(), HttpStatus.OK);
 
     }
 
