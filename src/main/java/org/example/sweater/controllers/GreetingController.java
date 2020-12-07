@@ -57,8 +57,8 @@ public class GreetingController {
         @Autowired
         private RegUser regUser;
 
-        @PostMapping(value="/question/{id}/test", produces = MediaType.APPLICATION_JSON_VALUE)
-        public ResponseEntity<String> putAnswerTest(@PathVariable String id,  @RequestBody AnswersE answer) throws JSONException, IOException {
+        @PostMapping(value = "/question/{id}/test", produces = MediaType.APPLICATION_JSON_VALUE)
+        public ResponseEntity<String> putAnswerTest(@PathVariable String id, @RequestBody AnswersE answer) throws JSONException, IOException {
             System.out.println(answer.toString());
             List<QuestionE> list = repository.findByIdd(id);
             StringWriter writer = new StringWriter();
@@ -66,9 +66,10 @@ public class GreetingController {
             mapper.writeValue(writer, list.get(0));
             return new ResponseEntity<>(writer.toString(), HttpStatus.OK);
         }
+
         //Добавить ответ
-            @PostMapping(value="/{id}/add/",produces = MediaType.APPLICATION_JSON_VALUE)
-        public ResponseEntity<String> putAnswer(@PathVariable String id,  @RequestBody AnswersE answer) throws JSONException, IOException {
+        @PostMapping(value = "/{id}/add/", produces = MediaType.APPLICATION_JSON_VALUE)
+        public ResponseEntity<String> putAnswer(@PathVariable String id, @RequestBody AnswersE answer) throws JSONException, IOException {
             List<QuestionE> list = repository.findByIdd(id);
             AnswersE Ans = answer;
             StringWriter writer = new StringWriter();
@@ -77,21 +78,22 @@ public class GreetingController {
             try {
                 list.get(0).addAnswer(Ans);
                 saved = repository.save(list.get(0));
-            }catch (Exception e){
+            } catch (Exception e) {
                 System.out.println(e);
                 mapper.writeValue(writer, saved);
                 return new ResponseEntity<>(writer.toString(), HttpStatus.OK);
             }
-            mapper =  new ObjectMapper();
+            mapper = new ObjectMapper();
             mapper.writeValue(writer, saved);
             System.out.println(writer.toString());
-            if(saved == list.get(0))
+            if (saved == list.get(0))
                 return new ResponseEntity<>(writer.toString(), HttpStatus.OK);
             else {
                 return new ResponseEntity<>(writer.toString(), HttpStatus.OK);
             }
         }
-        @PostMapping(value="/register" ,produces = MediaType.ALL_VALUE)
+
+        @PostMapping(value = "/register", produces = MediaType.ALL_VALUE)
         public ResponseEntity<String> createUserTest(@RequestBody Users user) throws JSONException, IOException {
             //RegUser regUser = new RegUser();
             regUser.setUser(user);
@@ -99,17 +101,19 @@ public class GreetingController {
             return new ResponseEntity<>(answer, HttpStatus.OK);
         }
 
-        @PostMapping(value="/login", produces = MediaType.ALL_VALUE)
+        @PostMapping(value = "/login", produces = MediaType.ALL_VALUE)
         public ResponseEntity<String> login(@RequestBody Users user) throws JSONException, IOException {
             BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-            if(encoder.matches(user.getPassword(), repo.findByUsername(user.getUsername()).getPassword())){
-                return new ResponseEntity<>("Success", HttpStatus.OK);
+            try {
+                if (encoder.matches(user.getPassword(), repo.findByUsername(user.getUsername()).getPassword())) {
+                    return new ResponseEntity<>("Success", HttpStatus.OK);
+                }
+            } catch (Exception e) {
+                System.out.println(e);
+                return new ResponseEntity<>("Error no user", HttpStatus.OK);
             }
-            return new ResponseEntity<>("Already exist", HttpStatus.OK);
+            return new ResponseEntity<>("Error no user", HttpStatus.OK);
         }
-
-
-
     }
     //Поиск вопроса по Id
     @RequestMapping(value="/{id}", method= RequestMethod.GET,produces = MediaType.APPLICATION_JSON_VALUE)
