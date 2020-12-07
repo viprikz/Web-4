@@ -114,6 +114,17 @@ public class GreetingController {
             }
             return new ResponseEntity<>("Error no user", HttpStatus.OK);
         }
+        @PostMapping(value = "/create", produces = MediaType.ALL_VALUE)
+        public ResponseEntity<String> createQuestion(@RequestBody QuestionE questionE) throws JSONException, IOException {
+            try {
+                repository.save(questionE);
+            }catch (Exception e)
+            {
+                System.out.println(e);
+                return new ResponseEntity<>("Error", HttpStatus.OK);
+            }
+            return new ResponseEntity<>("Success", HttpStatus.OK);
+        }
     }
     //Поиск вопроса по Id
     @RequestMapping(value="/{id}", method= RequestMethod.GET,produces = MediaType.APPLICATION_JSON_VALUE)

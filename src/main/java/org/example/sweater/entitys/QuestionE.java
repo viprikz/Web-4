@@ -14,20 +14,16 @@ public class QuestionE {
 
     private String shortcontent;
     private String content;
-    private int order;
     private List<AnswersE> Answers = new ArrayList<AnswersE>();
 
     public QuestionE() {}
 
-    public QuestionE(String shortcontent, String content, int order) {
+    public QuestionE(String shortcontent, String content) {
         this.shortcontent = shortcontent;
         this.content = content;
-        this.order = order;;
     }
     public String getShortcontent(){ return this.shortcontent; }
     public String getContent(){ return this.content; }
-    public int getOrder() { return this.order; }
-    public void setOrder(int i) { this.order = i;return; }
     public String getid() { return this.id; }
     public void addAnswer(AnswersE Answer1){
         System.out.println(Answer1);
@@ -46,8 +42,8 @@ public class QuestionE {
     public String toString() {
         if(this.Answers.size() > 0)
         return String.format(
-                "QuestionE[id=%s, shortcontent='%s', content='%s', order='%d', Ans = '%s']", id, shortcontent, content, order, Answers.get(0));
+                "QuestionE[id=%s, shortcontent='%s', content='%s', order='%d', Ans = '%s']", id, shortcontent, content, Answers.get(0));
         else
-            return String.format("QuestionE[id=%s, shortcontent='%s', content='%s', order='%d']", id, shortcontent, content, order);
+            return String.format("QuestionE[id=%s, shortcontent='%s', content='%s', order='%d']", id, shortcontent, content);
     }
 }
