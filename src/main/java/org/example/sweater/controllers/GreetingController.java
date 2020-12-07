@@ -9,6 +9,7 @@ import org.example.sweater.repository.QuestionsRepository;
 //import org.example.sweater.service.CreateUser;
 import org.example.sweater.repository.UsersRepository;
 import org.example.sweater.service.RegUser;
+//import org.graalvm.compiler.lir.LIRInstruction;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -16,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -89,17 +91,23 @@ public class GreetingController {
                 return new ResponseEntity<>(writer.toString(), HttpStatus.OK);
             }
         }
-        @PostMapping(value="/register" ,produces = MediaType.APPLICATION_JSON_VALUE)
+        @PostMapping(value="/register" ,produces = MediaType.ALL_VALUE)
         public ResponseEntity<String> createUserTest(@RequestBody Users user) throws JSONException, IOException {
             //RegUser regUser = new RegUser();
             regUser.setUser(user);
-            regUser.saveUser();
-            StringWriter writer1 = new StringWriter();
-            ObjectMapper mapper1 = new ObjectMapper();
-            mapper1.writeValue(writer1, repo.findByUsername(user.getUsername()));
-            System.out.println(writer1.toString());
-            return new ResponseEntity<>(writer1.toString(), HttpStatus.OK);
+            String answer = regUser.saveUser();
+            return new ResponseEntity<>(answer, HttpStatus.OK);
         }
+
+        @PostMapping(value="/login", produces = MediaType.ALL_VALUE)
+        public ResponseEntity<String> login(@RequestBody Users user) throws JSONException, IOException {
+            BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+            if(encoder.matches(user.getPassword(), repo.findByUsername(user.getUsername()).getPassword())){
+                return new ResponseEntity<>("SUCKses", HttpStatus.OK);
+            }
+            return new ResponseEntity<>("False", HttpStatus.OK);
+        }
+
 
 
     }
@@ -113,7 +121,6 @@ public class GreetingController {
         return new ResponseEntity<>(writer.toString(), HttpStatus.OK);
 
     }
-
     //Поиск вопроса по Заголовку
 
     @RequestMapping(value="/search/{content}", method= RequestMethod.GET,produces = MediaType.APPLICATION_JSON_VALUE)

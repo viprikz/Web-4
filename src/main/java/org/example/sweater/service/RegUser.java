@@ -18,7 +18,7 @@ public class RegUser {
     public Users getUser(){
         return this.user;
     }
-    public Users saveUser(){
+    public String saveUser(){
         try {
             repo.findByUsername(this.getUser().getUsername());
             if(repo.findByUsername(this.getUser().getUsername()) == null) {
@@ -26,12 +26,16 @@ public class RegUser {
                 String hashedPassword = passwordEncoder.encode(this.user.getPassword());
                 this.user.setPassword(hashedPassword);
                 this.user = repo.save(user);
+                return "SUCKses";
+            }
+            else{
+                return "fill";
             }
         } catch (Exception e) {
             System.out.println("Ошибка в создани пользоваеля");
             System.out.println(e);
         }
-        return null;
+        return "Error";
     }
     public void showUser()
     {
