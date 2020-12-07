@@ -103,9 +103,9 @@ public class GreetingController {
         public ResponseEntity<String> login(@RequestBody Users user) throws JSONException, IOException {
             BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
             if(encoder.matches(user.getPassword(), repo.findByUsername(user.getUsername()).getPassword())){
-                return new ResponseEntity<>("SUCKses", HttpStatus.OK);
+                return new ResponseEntity<>("Success", HttpStatus.OK);
             }
-            return new ResponseEntity<>("False", HttpStatus.OK);
+            return new ResponseEntity<>("Already exist", HttpStatus.OK);
         }
 
 

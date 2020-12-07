@@ -1,4 +1,5 @@
 package org.example.sweater.service;
+
 import org.example.sweater.entitys.Users;
 import org.example.sweater.repository.QuestionsRepository;
 import org.example.sweater.repository.UsersRepository;
@@ -12,24 +13,26 @@ public class RegUser {
     @Autowired
     private UsersRepository repo;
     private Users user;
-    public void setUser(Users user){
+
+    public void setUser(Users user) {
         this.user = user;
     }
-    public Users getUser(){
+
+    public Users getUser() {
         return this.user;
     }
-    public String saveUser(){
+
+    public String saveUser() {
         try {
             repo.findByUsername(this.getUser().getUsername());
-            if(repo.findByUsername(this.getUser().getUsername()) == null) {
+            if (repo.findByUsername(this.getUser().getUsername()) == null) {
                 BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
                 String hashedPassword = passwordEncoder.encode(this.user.getPassword());
                 this.user.setPassword(hashedPassword);
                 this.user = repo.save(user);
-                return "SUCKses";
-            }
-            else{
-                return "fill";
+                return "Success";
+            } else {
+                return "Already exist";
             }
         } catch (Exception e) {
             System.out.println("Ошибка в создани пользоваеля");
@@ -37,8 +40,8 @@ public class RegUser {
         }
         return "Error";
     }
-    public void showUser()
-    {
+
+    public void showUser() {
         System.out.println("-------------------------");
         System.out.println(this.user.getUsername());
         System.out.println(this.user.getPassword());
