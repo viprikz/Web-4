@@ -14,7 +14,7 @@ public class AnswersE {
     @Override
     public String toString() {
         return String.format(
-                "AnswerE [content='%s']",information);
+                "AnswerE [information='%s']",information);
     }
     public String getinformation() {
         return this.information;

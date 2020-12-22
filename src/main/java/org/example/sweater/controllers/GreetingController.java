@@ -8,7 +8,7 @@ import org.example.sweater.repository.QuestionsRepository;
 //import org.example.sweater.service.CreateUser;
 //import org.example.sweater.service.CreateUser;
 import org.example.sweater.repository.UsersRepository;
-import org.example.sweater.service.RegUser;
+import org.example.sweater.service.*;
 //import org.graalvm.compiler.lir.LIRInstruction;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -30,20 +30,21 @@ import java.util.List;
 public class GreetingController {
     @Autowired
     private QuestionsRepository repository;
+    @Autowired
+    private Top10 top10;
+    @Autowired
+    private AddAnswer addAnswer;
+    @Autowired
+    private Describe describe;
+    @Autowired
+    private SearchByContent searchByContent;
+    @Autowired
+    private CreateQuestion createQuestion;
+
     @RequestMapping(value = "/top10", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> top10(Model model) {
+    public ResponseEntity<String> top10() {
         //List<QuestionE> listE = new ArrayList<QuestionE>();
-        StringWriter writer = new StringWriter();
-        ObjectMapper mapper = new ObjectMapper();
-        try{
-            List<QuestionE> list =repository.findAll();
-            mapper.writeValue(writer, list);
-            int z = 0;
-            if(list.size() >=10)
-                z = 9;
-            list.subList(list.size() - z , list.size());
-        }catch (Exception e){ System.out.println(e);}
-        return new ResponseEntity<>(writer.toString(), HttpStatus.OK);
+        return new ResponseEntity<String>(top10.show(), HttpStatus.OK);
     }
     @RestController
     @RequestMapping(value = "/post", headers="Content-Type=application/json", method = RequestMethod.POST)
@@ -70,27 +71,7 @@ public class GreetingController {
         //Добавить ответ
         @PostMapping(value = "/{id}/add/", produces = MediaType.APPLICATION_JSON_VALUE)
         public ResponseEntity<String> putAnswer(@PathVariable String id, @RequestBody AnswersE answer) throws JSONException, IOException {
-            List<QuestionE> list = repository.findByIdd(id);
-            AnswersE Ans = answer;
-            StringWriter writer = new StringWriter();
-            ObjectMapper mapper = new ObjectMapper();
-            QuestionE saved = new QuestionE();
-            try {
-                list.get(0).addAnswer(Ans);
-                saved = repository.save(list.get(0));
-            } catch (Exception e) {
-                System.out.println(e);
-                mapper.writeValue(writer, saved);
-                return new ResponseEntity<>(writer.toString(), HttpStatus.OK);
-            }
-            mapper = new ObjectMapper();
-            mapper.writeValue(writer, saved);
-            System.out.println(writer.toString());
-            if (saved == list.get(0))
-                return new ResponseEntity<>(writer.toString(), HttpStatus.OK);
-            else {
-                return new ResponseEntity<>(writer.toString(), HttpStatus.OK);
-            }
+                return new ResponseEntity<>(addAnswer.show(id, answer), HttpStatus.OK);
         }
 
         @PostMapping(value = "/register", produces = MediaType.ALL_VALUE)
@@ -116,39 +97,20 @@ public class GreetingController {
         }
         @PostMapping(value = "/create", produces = MediaType.ALL_VALUE)
         public ResponseEntity<String> createQuestion(@RequestBody QuestionE questionE) throws JSONException, IOException {
-            try {
-                repository.save(questionE);
-            }catch (Exception e)
-            {
-                System.out.println(e);
-                return new ResponseEntity<>("Error", HttpStatus.OK);
-            }
-            return new ResponseEntity<>("Success", HttpStatus.OK);
+            return new ResponseEntity<>(createQuestion.show(questionE), HttpStatus.OK);
         }
     }
     //Поиск вопроса по Id
     @RequestMapping(value="/{id}", method= RequestMethod.GET,produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> findQuestion(@PathVariable String id) throws JSONException, IOException {
-        List<QuestionE> list = repository.findByIdd(id);
-        StringWriter writer = new StringWriter();
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.writeValue(writer,list.get(0));
-        return new ResponseEntity<>(writer.toString(), HttpStatus.OK);
+        return new ResponseEntity<>(describe.show(id), HttpStatus.OK);
 
     }
     //Поиск вопроса по Заголовку
 
     @RequestMapping(value="/search/{content}", method= RequestMethod.GET,produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> findQuestionByContent(@PathVariable String content, Model  model) throws JSONException, IOException {
-        List<QuestionE> list = repository.findByShortcontent(content);
-        StringWriter writer = new StringWriter();
-        ObjectMapper mapper = new ObjectMapper();
-        try {
-            mapper.writeValue(writer, list.get(0));
-        }catch (Exception e) {
-            System.out.println(e);
-        }
-        return new ResponseEntity<>(writer.toString(), HttpStatus.OK);
+    public ResponseEntity<String> findQuestionByContent(@PathVariable String content) throws JSONException, IOException {
+        return new ResponseEntity<>(searchByContent.show(content), HttpStatus.OK);
     }
 
 }

@@ -23,6 +23,8 @@ public class RegUser {
     }
 
     public String saveUser() {
+        if(user.getUsername() == "" ||  user.getPassword() == "")
+            return "Bad Format";
         try {
             repo.findByUsername(this.getUser().getUsername());
             if (repo.findByUsername(this.getUser().getUsername()) == null) {
